@@ -160,8 +160,7 @@ When requesting a specific language:
     "success": false,
     "err_code": "0201",
     "err_msg": "Record not found"
-  },
-  "result": null
+  }
 }
 ```
 
@@ -231,8 +230,7 @@ All responses follow a standard envelope format:
     "success": false,
     "err_code": "0104",
     "err_msg": "openAt must be in HH:MM format with valid time (00:00-23:59)"
-  },
-  "result": null
+  }
 }
 ```
 
@@ -243,8 +241,7 @@ All responses follow a standard envelope format:
     "success": false,
     "err_code": "0201",
     "err_msg": "Record not found"
-  },
-  "result": null
+  }
 }
 ```
 
@@ -460,8 +457,7 @@ When validation fails, you'll receive detailed error messages:
     "success": false,
     "err_code": "0104",
     "err_msg": "openHour must be in HH:MM format with valid time (00:00-23:59)"
-  },
-  "result": null
+  }
 }
 
 // Invalid page number
@@ -470,8 +466,7 @@ When validation fails, you'll receive detailed error messages:
     "success": false,
     "err_code": "0103",
     "err_msg": "Invalid parameter format or limit exceeded"
-  },
-  "result": null
+  }
 }
 ```
 

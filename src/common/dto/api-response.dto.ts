@@ -4,13 +4,18 @@ import {
   ErrorCode,
 } from '../constants/error-codes';
 
+/**
+ * API Response Header
+ * Success: { success: true, message: string }
+ * Error: { success: false, err_code: string, err_msg: string }
+ */
 export class ApiResponseHeader {
   success: boolean;
   message?: string;
   err_code?: ErrorCode;
   err_msg?: string;
 
-  constructor(
+  private constructor(
     success: boolean,
     message?: string,
     errCode?: ErrorCode,
@@ -19,17 +24,13 @@ export class ApiResponseHeader {
     this.success = success;
 
     if (success) {
-      // Success: only show message
       this.message = message || 'Operation successful';
-      // Don't set err_code and err_msg - they won't appear in JSON
     } else {
-      // Error: only show err_code and err_msg
       this.err_code = errCode || ERROR_CODES.SERVER_ERROR;
       this.err_msg =
         errMsg ||
         ERROR_MESSAGES[errCode || ERROR_CODES.SERVER_ERROR] ||
         'Unknown error';
-      // Don't set message - it won't appear in JSON
     }
   }
 
@@ -42,26 +43,56 @@ export class ApiResponseHeader {
   }
 }
 
-export class ApiResponse<T = any> {
+/**
+ * Success Response: { header, result, meta? }
+ */
+export class ApiSuccessResponse<T = any> {
   header: ApiResponseHeader;
-  meta?: any;
   result: T;
+  meta?: any;
 
   constructor(header: ApiResponseHeader, result: T, meta?: any) {
     this.header = header;
     this.result = result;
-    this.meta = meta;
-  }
-
-  static success<T>(message: string, result: T, meta?: any): ApiResponse<T> {
-    return new ApiResponse(ApiResponseHeader.success(message), result, meta);
-  }
-
-  static error<T = null>(
-    errCode: ErrorCode,
-    errMsg?: string,
-    result: T = null as T,
-  ): ApiResponse<T> {
-    return new ApiResponse(ApiResponseHeader.error(errCode, errMsg), result);
+    if (meta) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      this.meta = meta;
+    }
   }
 }
+
+/**
+ * Error Response: { header } (no result field)
+ */
+export class ApiErrorResponse {
+  header: ApiResponseHeader;
+
+  constructor(header: ApiResponseHeader) {
+    this.header = header;
+  }
+}
+
+/**
+ * Union type for all API responses
+ */
+export type ApiResponse<T = any> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+/**
+ * Factory for creating API responses
+ * @example
+ * ApiResponse.success('Found 10 records', data, { total: 10 })
+ * ApiResponse.error('0201', 'Record not found')
+ */
+export const ApiResponse = {
+  success<T>(message: string, result: T, meta?: any): ApiSuccessResponse<T> {
+    return new ApiSuccessResponse(
+      ApiResponseHeader.success(message),
+      result,
+      meta,
+    );
+  },
+
+  error(errCode: ErrorCode, errMsg?: string): ApiErrorResponse {
+    return new ApiErrorResponse(ApiResponseHeader.error(errCode, errMsg));
+  },
+};

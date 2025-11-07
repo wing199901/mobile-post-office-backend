@@ -30,10 +30,12 @@ export class ApiExceptionFilter implements ExceptionFilter {
       // Standard HTTP exception
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message =
         typeof exceptionResponse === 'string'
           ? exceptionResponse
-          : (exceptionResponse as any).message || 'Request failed';
+          : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            (exceptionResponse as any).message || 'Request failed';
 
       // Map common HTTP exceptions to error codes
       let errCode: ErrorCode = ERROR_CODES.SERVER_ERROR;
@@ -47,19 +49,27 @@ export class ApiExceptionFilter implements ExceptionFilter {
         errCode = ERROR_CODES.UNAUTHORIZED;
       }
 
-      const errMsg = Array.isArray(message) ? message.join(', ') : message;
+      const errMsg = (
+        Array.isArray(message) ? message.join(', ') : message
+      ) as string;
       apiResponse = ApiResponse.error(errCode, errMsg);
     } else {
       // Unknown error - check for database errors
       this.logger.error('Unhandled exception', exception);
 
       // Handle database connection errors
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const error = exception as any;
       if (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error?.code === 'ECONNREFUSED' ||
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error?.code === 'PROTOCOL_CONNECTION_LOST' ||
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error?.errno === 'ETIMEDOUT' ||
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         error?.message?.includes('Connection lost') ||
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         error?.message?.includes("Can't connect")
       ) {
         apiResponse = ApiResponse.error(

@@ -467,6 +467,32 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header).toHaveProperty('err_msg');
         });
     });
+
+    it('error response should NOT include result field', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/999999')
+        .expect(404)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(false);
+          // Error responses should NOT have result field
+          expect(res.body).not.toHaveProperty('result');
+          // Should have error fields
+          expect(res.body.header).toHaveProperty('err_code');
+          expect(res.body.header).toHaveProperty('err_msg');
+        });
+    });
+
+    it('success response should include result field', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts?limit=1')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          // Success responses MUST have result field
+          expect(res.body).toHaveProperty('result');
+          expect(res.body.header).toHaveProperty('message');
+        });
+    });
   });
 
   describe('Multiple Filters Combined', () => {
