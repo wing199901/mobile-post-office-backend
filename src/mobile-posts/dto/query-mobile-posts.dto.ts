@@ -44,7 +44,7 @@ export class QueryMobilePostsDto {
   limit?: number = 20;
 
   @IsOptional()
-  @IsIn(['id', 'seq', 'district', 'openHour', 'closeHour', 'name'])
+  @IsIn(['id', 'seq', 'district', 'openHour', 'closeHour', 'name', 'dayOfWeek'])
   sortBy?: string = 'id';
 
   @IsOptional()

@@ -247,6 +247,24 @@
           }
         },
         {
+          "name": "Sort by Day of Week",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts?sortBy=dayOfWeek&sortDir=asc&lang=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts"],
+              "query": [
+                { "key": "sortBy", "value": "dayOfWeek" },
+                { "key": "sortDir", "value": "asc" },
+                { "key": "lang", "value": "en" }
+              ]
+            },
+            "description": "Sort mobile posts by day of week. Note: dayOfWeekCode values are 1-7 (Monday to Sunday), but sorting is adjusted so Sunday (7) appears first, followed by Monday (1) through Saturday (6)."
+          }
+        },
+        {
           "name": "Pagination - Page 2",
           "request": {
             "method": "GET",
@@ -304,6 +322,88 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "mobileposts", "999999"],
               "query": [{ "key": "lang", "value": "en" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Districts",
+      "item": [
+        {
+          "name": "Get All Districts (English)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all?lang=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"],
+              "query": [{ "key": "lang", "value": "en" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Districts (Traditional Chinese)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all?lang=tc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"],
+              "query": [{ "key": "lang", "value": "tc" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Districts (Simplified Chinese)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all?lang=sc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"],
+              "query": [{ "key": "lang", "value": "sc" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Districts (All Languages)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all?lang=all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"],
+              "query": [{ "key": "lang", "value": "all" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Districts (Default - No Lang)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"]
+            }
+          }
+        },
+        {
+          "name": "Get Districts - Invalid Lang (Error 0105)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobileposts/districts/all?lang=invalid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobileposts", "districts", "all"],
+              "query": [{ "key": "lang", "value": "invalid" }]
             }
           }
         }

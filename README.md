@@ -35,11 +35,14 @@ mysql -u root -p -e "CREATE DATABASE mobile_post_office CHARACTER SET utf8mb4 CO
 # 3. Run database schema
 mysql -u root -p mobile_post_office < schema.sql
 
-# 4. Configure environment
+# 4. Import districts reference data (Hong Kong 18 Districts)
+mysql -u root -p mobile_post_office < districts.sql
+
+# 5. Configure environment
 cp .env.example .env
 # Edit .env with your database credentials
 
-# 5. Start the server
+# 6. Start the server
 npm run start:dev
 ```
 
@@ -72,6 +75,7 @@ npm run truncate
 |--------|----------|-------------|
 | GET | `/api/mobileposts` | List & search mobile posts with filters |
 | GET | `/api/mobileposts/:id` | Get single mobile post record |
+| GET | `/api/mobileposts/districts/all` | Get all unique districts |
 | POST | `/api/mobileposts` | Create new mobile post |
 | PUT | `/api/mobileposts/:id` | Update mobile post (partial) |
 | DELETE | `/api/mobileposts/:id` | Delete mobile post |
@@ -88,8 +92,17 @@ curl "http://localhost:3000/api/mobileposts?search=元朗&lang=tc"
 # Get all language fields
 curl "http://localhost:3000/api/mobileposts/1?lang=all"
 
+# Get all unique districts (English)
+curl "http://localhost:3000/api/mobileposts/districts/all?lang=en"
+
+# Get all districts with all languages
+curl "http://localhost:3000/api/mobileposts/districts/all?lang=all"
+
 # Filter by district and day
 curl "http://localhost:3000/api/mobileposts?district=Yuen%20Long&dayOfWeek=1"
+
+# Sort by day of week
+curl "http://localhost:3000/api/mobileposts?sortBy=dayOfWeek&sortDir=asc&lang=en"
 
 # Create new record
 curl -X POST http://localhost:3000/api/mobileposts \
@@ -176,11 +189,76 @@ When requesting a specific language:
 | `seq` | int | Filter by sequence | - |
 | `page` | int | Page number | >= 1 (default: 1) |
 | `limit` | int | Results per page | 1-200 (default: 20) |
-| `sortBy` | string | Sort field | id, seq, district, openHour, closeHour, name |
+| `sortBy` | string | Sort field | id, seq, district, openHour, closeHour, name, dayOfWeek |
 | `sortDir` | string | Sort direction | asc, desc |
 | `lang` | string | Response language | en, tc, sc, all (default: en) |
 
 **Note**: The `search` and `district` parameters automatically search across all language fields (English, Traditional Chinese, and Simplified Chinese). You don't need to specify the search language - the server will find matches in any language.
+
+### Get All Districts API
+
+**Endpoint:** `GET /api/mobileposts/districts/all`
+
+Returns all unique districts in the database.
+
+**Query Parameters:**
+| Parameter | Type | Description | Values |
+|-----------|------|-------------|--------|
+| `lang` | string | Response language | en, tc, sc, all (default: en) |
+
+**Example Response (lang=en):**
+```json
+{
+  "header": {
+    "success": true,
+    "message": "18 districts retrieved"
+  },
+  "result": [
+    { "district": "Central & Western" },
+    { "district": "Eastern" },
+    { "district": "Islands" },
+    { "district": "Kowloon City" },
+    { "district": "Kwai Tsing" },
+    { "district": "Kwun Tong" },
+    { "district": "North" },
+    { "district": "Sai Kung" },
+    { "district": "Sha Tin" },
+    { "district": "Sham Shui Po" },
+    { "district": "Southern" },
+    { "district": "Tai Po" },
+    { "district": "Tsuen Wan" },
+    { "district": "Tuen Mun" },
+    { "district": "Wan Chai" },
+    { "district": "Wong Tai Sin" },
+    { "district": "Yau Tsim Mong" },
+    { "district": "Yuen Long" }
+  ]
+}
+```
+
+**Example Response (lang=all):**
+```json
+{
+  "header": {
+    "success": true,
+    "message": "18 districts retrieved"
+  },
+  "result": [
+    {
+      "district": "Central & Western",
+      "districtEN": "Central & Western",
+      "districtTC": "中西區",
+      "districtSC": "中西区"
+    },
+    {
+      "district": "Eastern",
+      "districtEN": "Eastern",
+      "districtTC": "東區",
+      "districtSC": "东区"
+    }
+  ]
+}
+```
 
 ## ⚠️ Error Codes
 
@@ -302,6 +380,16 @@ The E2E tests (`test/mobile-posts.e2e-spec.ts`) provide comprehensive coverage o
   - Fetch by ID in different languages
   - Non-existent ID error handling
   - All languages response (lang=all)
+
+- ✅ Get All Districts (8 tests)
+  - Get districts in English
+  - Get districts in Traditional Chinese
+  - Get districts in Simplified Chinese
+  - Get all language fields (lang=all)
+  - Default language behavior (no lang parameter)
+  - Verify Hong Kong 18 districts count
+  - Verify districts order and content
+  - Invalid lang parameter error handling
   
 - ✅ Update Record (4 tests)
   - Partial field updates
@@ -321,7 +409,7 @@ The E2E tests (`test/mobile-posts.e2e-spec.ts`) provide comprehensive coverage o
   - Multiple filters combined
   - Search with pagination and sorting
 
-**Total: 28 comprehensive test cases**
+**Total: 36 comprehensive test cases**
 
 ### Running E2E Tests
 

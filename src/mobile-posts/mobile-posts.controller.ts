@@ -116,4 +116,22 @@ export class MobilePostsController {
     await this.mobilePostsService.remove(id);
     return ApiResponse.success('deleted', null);
   }
+
+  @Get('districts/all')
+  async getAllDistricts(@Query('lang') lang?: 'en' | 'tc' | 'sc' | 'all') {
+    // Validate lang parameter
+    const validLangs = ['en', 'tc', 'sc', 'all'];
+    const selectedLang = (lang || 'en') as 'en' | 'tc' | 'sc' | 'all';
+    if (!validLangs.includes(selectedLang)) {
+      throw new ApiException(
+        ERROR_CODES.INVALID_LANG_VALUE,
+        'lang must be one of: en, tc, sc, all',
+        'invalid input',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const districts = await this.mobilePostsService.getAllDistricts(selectedLang);
+    return ApiResponse.success(`${districts.length} districts retrieved`, districts);
+  }
 }

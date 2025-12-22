@@ -2,6 +2,7 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { MobilePost } from './entities/mobile-post.entity';
+import { District } from './entities/district.entity';
 import { CreateMobilePostDto } from './dto/create-mobile-post.dto';
 import { UpdateMobilePostDto } from './dto/update-mobile-post.dto';
 import { QueryMobilePostsDto } from './dto/query-mobile-posts.dto';
@@ -19,6 +20,8 @@ export class MobilePostsService {
   constructor(
     @InjectRepository(MobilePost)
     private readonly mobilePostRepository: Repository<MobilePost>,
+    @InjectRepository(District)
+    private readonly districtRepository: Repository<District>,
   ) {}
 
   async create(createDto: CreateMobilePostDto): Promise<MobilePost> {
@@ -357,6 +360,12 @@ export class MobilePostsService {
           sortColumn = 'mp.nameEN';
         }
         break;
+      case 'dayOfWeek':
+        // Sort by day of week with Sunday (7) first
+        // CASE WHEN dayOfWeekCode = 7 THEN 0 ELSE dayOfWeekCode END
+        // This makes Sunday sort first, then Monday-Saturday (1-6)
+        sortColumn = 'CASE WHEN mp.dayOfWeekCode = 7 THEN 0 ELSE mp.dayOfWeekCode END';
+        break;
       default:
         sortColumn = 'mp.id';
     }
@@ -420,6 +429,32 @@ export class MobilePostsService {
         latitude: record.latitude ? record.latitude.toString() : null,
         longitude: record.longitude ? record.longitude.toString() : null,
       } as MobilePostResponseSingle;
+    }
+  }
+
+  async getAllDistricts(lang: 'en' | 'tc' | 'sc' | 'all' = 'en'): Promise<
+    Array<{ district: string; districtEN?: string; districtTC?: string; districtSC?: string }>
+  > {
+    const districts = await this.districtRepository.find({
+      order: { displayOrder: 'ASC' },
+    });
+
+    if (lang === 'all') {
+      // Return all language fields
+      return districts.map((item) => ({
+        district: item.districtEN,
+        districtEN: item.districtEN,
+        districtTC: item.districtTC,
+        districtSC: item.districtSC,
+      }));
+    } else {
+      // Return specific language
+      const suffix = lang.toUpperCase() as 'EN' | 'TC' | 'SC';
+      const districtKey = `district${suffix}` as keyof District;
+
+      return districts.map((item) => ({
+        district: (item[districtKey] as string) || item.districtEN,
+      }));
     }
   }
 }

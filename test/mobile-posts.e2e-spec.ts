@@ -141,6 +141,20 @@ describe('Mobile Posts API (e2e)', () => {
         });
     });
 
+    it('should sort by day of week', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts?sortBy=dayOfWeek&sortDir=asc&lang=en&limit=10')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          if (res.body.result.length > 1) {
+            const first = res.body.result[0].dayOfWeekCode;
+            const last = res.body.result[res.body.result.length - 1].dayOfWeekCode;
+            expect(first).toBeLessThanOrEqual(last);
+          }
+        });
+    });
+
     it('should return error for invalid lang parameter', () => {
       return request(app.getHttpServer())
         .get('/api/mobileposts?lang=invalid')
@@ -189,7 +203,7 @@ describe('Mobile Posts API (e2e)', () => {
     it('should create a new mobile post record', () => {
       const newRecord = {
         mobileCode: 'TEST',
-        seq: 999,
+        seq: 99999, // Use a very high number to avoid conflicts
         nameEN: 'Test Mobile Post Office',
         nameTC: '測試流動郵局',
         nameSC: '测试流动邮局',
@@ -518,6 +532,146 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           expect(res.body.meta.page).toBe(1);
           expect(res.body.meta.limit).toBe(5);
+        });
+    });
+  });
+
+  describe('GET /api/mobileposts/districts/all - Get All Districts', () => {
+    it('should return all districts in English', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=en')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('header');
+          expect(res.body.header.success).toBe(true);
+          expect(res.body.header).toHaveProperty('message');
+          expect(res.body.header.message).toContain('districts retrieved');
+          expect(res.body.header).not.toHaveProperty('err_code');
+          expect(res.body).toHaveProperty('result');
+          expect(Array.isArray(res.body.result)).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          // Check structure of first district
+          if (res.body.result.length > 0) {
+            const firstDistrict = res.body.result[0];
+            expect(firstDistrict).toHaveProperty('district');
+            expect(typeof firstDistrict.district).toBe('string');
+            expect(firstDistrict).not.toHaveProperty('districtEN');
+            expect(firstDistrict).not.toHaveProperty('districtTC');
+            expect(firstDistrict).not.toHaveProperty('districtSC');
+          }
+        });
+    });
+
+    it('should return all districts in Traditional Chinese', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=tc')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(Array.isArray(res.body.result)).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          if (res.body.result.length > 0) {
+            const firstDistrict = res.body.result[0];
+            expect(firstDistrict).toHaveProperty('district');
+            expect(typeof firstDistrict.district).toBe('string');
+          }
+        });
+    });
+
+    it('should return all districts in Simplified Chinese', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=sc')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(Array.isArray(res.body.result)).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          if (res.body.result.length > 0) {
+            const firstDistrict = res.body.result[0];
+            expect(firstDistrict).toHaveProperty('district');
+            expect(typeof firstDistrict.district).toBe('string');
+          }
+        });
+    });
+
+    it('should return all language fields when lang=all', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=all')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(Array.isArray(res.body.result)).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          // Check that all language fields are present
+          if (res.body.result.length > 0) {
+            const firstDistrict = res.body.result[0];
+            expect(firstDistrict).toHaveProperty('district');
+            expect(firstDistrict).toHaveProperty('districtEN');
+            expect(firstDistrict).toHaveProperty('districtTC');
+            expect(firstDistrict).toHaveProperty('districtSC');
+            expect(typeof firstDistrict.districtEN).toBe('string');
+            expect(typeof firstDistrict.districtTC).toBe('string');
+            expect(typeof firstDistrict.districtSC).toBe('string');
+          }
+        });
+    });
+
+    it('should return districts with default language (en) when no lang parameter', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(Array.isArray(res.body.result)).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          if (res.body.result.length > 0) {
+            const firstDistrict = res.body.result[0];
+            expect(firstDistrict).toHaveProperty('district');
+            expect(typeof firstDistrict.district).toBe('string');
+          }
+        });
+    });
+
+    it('should return exactly 18 districts for Hong Kong', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=en')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(res.body.result.length).toBe(18);
+          expect(res.body.header.message).toContain('18 districts retrieved');
+        });
+    });
+
+    it('should return districts in correct order (by displayOrder)', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=all')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(true);
+          expect(res.body.result.length).toBeGreaterThan(0);
+          
+          // Verify some expected districts are present
+          const districtNames = res.body.result.map((d: any) => d.districtEN);
+          expect(districtNames).toContain('Central & Western');
+          expect(districtNames).toContain('Yuen Long');
+          expect(districtNames).toContain('Kowloon City');
+        });
+    });
+
+    it('should return error 0105 for invalid lang parameter', () => {
+      return request(app.getHttpServer())
+        .get('/api/mobileposts/districts/all?lang=invalid')
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.header.success).toBe(false);
+          expect(res.body.header.err_code).toBe('0105');
+          expect(res.body.header.err_msg).toContain('lang must be one of');
         });
     });
   });
