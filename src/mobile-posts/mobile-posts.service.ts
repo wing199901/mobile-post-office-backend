@@ -47,7 +47,7 @@ export class MobilePostsService {
       const saved = await this.mobilePostRepository.save(mobilePost);
       return Array.isArray(saved) ? saved[0] : saved;
     } catch (error) {
-      if ((error as any).code === 'ER_DUP_ENTRY') {
+      if (error.code === 'ER_DUP_ENTRY') {
         throw new ApiException(
           ERROR_CODES.DUPLICATE_RECORD,
           'Duplicate record',
@@ -364,7 +364,8 @@ export class MobilePostsService {
         // Sort by day of week with Sunday (7) first
         // CASE WHEN dayOfWeekCode = 7 THEN 0 ELSE dayOfWeekCode END
         // This makes Sunday sort first, then Monday-Saturday (1-6)
-        sortColumn = 'CASE WHEN mp.dayOfWeekCode = 7 THEN 0 ELSE mp.dayOfWeekCode END';
+        sortColumn =
+          'CASE WHEN mp.dayOfWeekCode = 7 THEN 0 ELSE mp.dayOfWeekCode END';
         break;
       default:
         sortColumn = 'mp.id';
@@ -433,7 +434,12 @@ export class MobilePostsService {
   }
 
   async getAllDistricts(lang: 'en' | 'tc' | 'sc' | 'all' = 'en'): Promise<
-    Array<{ district: string; districtEN?: string; districtTC?: string; districtSC?: string }>
+    Array<{
+      district: string;
+      districtEN?: string;
+      districtTC?: string;
+      districtSC?: string;
+    }>
   > {
     const districts = await this.districtRepository.find({
       order: { displayOrder: 'ASC' },

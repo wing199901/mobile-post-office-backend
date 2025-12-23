@@ -1,23 +1,37 @@
 -- Districts Table for Hong Kong 18 Districts
 -- Run this after schema.sql to create districts reference table
 
-CREATE TABLE IF NOT EXISTS `districts` (
+CREATE TABLE
+IF NOT EXISTS `districts`
+(
   `id` INT NOT NULL AUTO_INCREMENT,
-  `districtEN` VARCHAR(100) NOT NULL,
-  `districtTC` VARCHAR(100) NOT NULL,
-  `districtSC` VARCHAR(100) NOT NULL,
+  `districtEN` VARCHAR
+(100) NOT NULL,
+  `districtTC` VARCHAR
+(100) NOT NULL,
+  `districtSC` VARCHAR
+(100) NOT NULL,
   `displayOrder` INT NOT NULL DEFAULT 0,
   `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_district_en` (`districtEN`),
-  KEY `idx_district_tc` (`districtTC`),
-  KEY `idx_district_sc` (`districtSC`),
-  KEY `idx_display_order` (`displayOrder`)
+  `updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON
+UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY
+(`id`),
+  UNIQUE KEY `idx_district_en`
+(`districtEN`),
+  KEY `idx_district_tc`
+(`districtTC`),
+  KEY `idx_district_sc`
+(`districtSC`),
+  KEY `idx_display_order`
+(`displayOrder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert Hong Kong 18 Districts data
-INSERT INTO `districts` (`id`, `districtEN`, `districtTC`, `districtSC`, `displayOrder`) VALUES
+INSERT INTO `districts` (`
+id`,
+`districtEN
+`, `districtTC`, `districtSC`, `displayOrder`) VALUES
 (1, 'Central & Western', '中西區', '中西区', 1),
 (2, 'Eastern', '東區', '东区', 2),
 (3, 'Islands', '離島區', '离岛区', 3),

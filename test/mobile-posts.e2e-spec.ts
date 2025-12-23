@@ -149,7 +149,8 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           if (res.body.result.length > 1) {
             const first = res.body.result[0].dayOfWeekCode;
-            const last = res.body.result[res.body.result.length - 1].dayOfWeekCode;
+            const last =
+              res.body.result[res.body.result.length - 1].dayOfWeekCode;
             expect(first).toBeLessThanOrEqual(last);
           }
         });
@@ -550,7 +551,7 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body).toHaveProperty('result');
           expect(Array.isArray(res.body.result)).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           // Check structure of first district
           if (res.body.result.length > 0) {
             const firstDistrict = res.body.result[0];
@@ -571,7 +572,7 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           expect(Array.isArray(res.body.result)).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           if (res.body.result.length > 0) {
             const firstDistrict = res.body.result[0];
             expect(firstDistrict).toHaveProperty('district');
@@ -588,7 +589,7 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           expect(Array.isArray(res.body.result)).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           if (res.body.result.length > 0) {
             const firstDistrict = res.body.result[0];
             expect(firstDistrict).toHaveProperty('district');
@@ -605,7 +606,7 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           expect(Array.isArray(res.body.result)).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           // Check that all language fields are present
           if (res.body.result.length > 0) {
             const firstDistrict = res.body.result[0];
@@ -628,7 +629,7 @@ describe('Mobile Posts API (e2e)', () => {
           expect(res.body.header.success).toBe(true);
           expect(Array.isArray(res.body.result)).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           if (res.body.result.length > 0) {
             const firstDistrict = res.body.result[0];
             expect(firstDistrict).toHaveProperty('district');
@@ -655,7 +656,7 @@ describe('Mobile Posts API (e2e)', () => {
         .expect((res) => {
           expect(res.body.header.success).toBe(true);
           expect(res.body.result.length).toBeGreaterThan(0);
-          
+
           // Verify some expected districts are present
           const districtNames = res.body.result.map((d: any) => d.districtEN);
           expect(districtNames).toContain('Central & Western');

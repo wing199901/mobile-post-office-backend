@@ -121,7 +121,7 @@ export class MobilePostsController {
   async getAllDistricts(@Query('lang') lang?: 'en' | 'tc' | 'sc' | 'all') {
     // Validate lang parameter
     const validLangs = ['en', 'tc', 'sc', 'all'];
-    const selectedLang = (lang || 'en') as 'en' | 'tc' | 'sc' | 'all';
+    const selectedLang = lang || 'en';
     if (!validLangs.includes(selectedLang)) {
       throw new ApiException(
         ERROR_CODES.INVALID_LANG_VALUE,
@@ -131,7 +131,11 @@ export class MobilePostsController {
       );
     }
 
-    const districts = await this.mobilePostsService.getAllDistricts(selectedLang);
-    return ApiResponse.success(`${districts.length} districts retrieved`, districts);
+    const districts =
+      await this.mobilePostsService.getAllDistricts(selectedLang);
+    return ApiResponse.success(
+      `${districts.length} districts retrieved`,
+      districts,
+    );
   }
 }
