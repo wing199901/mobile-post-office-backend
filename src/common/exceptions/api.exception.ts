@@ -5,9 +5,8 @@ export class ApiException extends HttpException {
   constructor(
     public readonly errCode: ErrorCode,
     public readonly errMsg: string,
-    public readonly message: string,
     public readonly httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
   ) {
-    super({ errCode, errMsg, message }, httpStatus);
+    super({ errCode, errMsg }, httpStatus);
   }
 }

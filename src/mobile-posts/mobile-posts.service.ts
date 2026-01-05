@@ -34,7 +34,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.MISSING_REQUIRED_FIELD,
         'Missing required field: at least one of nameEN/nameTC/nameSC and one of districtEN/districtTC/districtSC',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -51,14 +50,12 @@ export class MobilePostsService {
         throw new ApiException(
           ERROR_CODES.DUPLICATE_RECORD,
           'Duplicate record',
-          'conflict',
           HttpStatus.CONFLICT,
         );
       }
       throw new ApiException(
         ERROR_CODES.SERVER_ERROR,
         (error as Error).message,
-        'server error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -93,7 +90,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.INVALID_TIME_FORMAT,
         'openAt must be in HH:MM format with valid time (00:00-23:59)',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -165,7 +161,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.RECORD_NOT_FOUND,
         `record not found for id ${id}`,
-        'not found',
         HttpStatus.NOT_FOUND,
       );
     }
@@ -186,7 +181,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.RECORD_NOT_FOUND,
         `record not found for id ${id}`,
-        'not found',
         HttpStatus.NOT_FOUND,
       );
     }
@@ -197,7 +191,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.NO_UPDATABLE_FIELDS,
         'No updatable fields provided',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -218,7 +211,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.SERVER_ERROR,
         (error as Error).message,
-        'server error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -231,7 +223,6 @@ export class MobilePostsService {
       throw new ApiException(
         ERROR_CODES.RECORD_NOT_FOUND,
         `record not found for id ${id}`,
-        'not found',
         HttpStatus.NOT_FOUND,
       );
     }
@@ -263,7 +254,6 @@ export class MobilePostsService {
         throw new ApiException(
           ERROR_CODES.INVALID_NUMERIC_VALUE,
           'latitude must be between -90 and 90',
-          'invalid input',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -281,7 +271,6 @@ export class MobilePostsService {
         throw new ApiException(
           ERROR_CODES.INVALID_NUMERIC_VALUE,
           'longitude must be between -180 and 180',
-          'invalid input',
           HttpStatus.BAD_REQUEST,
         );
       }

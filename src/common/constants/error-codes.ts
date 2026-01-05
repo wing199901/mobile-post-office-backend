@@ -24,19 +24,4 @@ export const ERROR_CODES = {
   UNAUTHORIZED: '0501',
 } as const;
 
-export const ERROR_MESSAGES = {
-  [ERROR_CODES.SUCCESS]: 'No error',
-  [ERROR_CODES.MISSING_REQUIRED_FIELD]: 'Missing required field(s)',
-  [ERROR_CODES.NO_UPDATABLE_FIELDS]: 'No updatable fields provided in PUT',
-  [ERROR_CODES.INVALID_PARAMETER_FORMAT]:
-    'Invalid parameter format or limit exceeded',
-  [ERROR_CODES.INVALID_TIME_FORMAT]: 'Invalid time format (expect HH:MM)',
-  [ERROR_CODES.INVALID_LANG_VALUE]: 'Invalid lang value (not en|tc|sc|all)',
-  [ERROR_CODES.INVALID_NUMERIC_VALUE]: 'Invalid numeric value or out of range',
-  [ERROR_CODES.RECORD_NOT_FOUND]: 'Record not found',
-  [ERROR_CODES.DUPLICATE_RECORD]: 'Duplicate / unique constraint violation',
-  [ERROR_CODES.SERVER_ERROR]: 'Database or internal server error',
-  [ERROR_CODES.UNAUTHORIZED]: 'Unauthorized',
-} as const;
-
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

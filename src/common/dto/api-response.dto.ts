@@ -1,8 +1,4 @@
-import {
-  ERROR_CODES,
-  ERROR_MESSAGES,
-  ErrorCode,
-} from '../constants/error-codes';
+import { ERROR_CODES, ErrorCode } from '../constants/error-codes';
 
 /**
  * API Response Header
@@ -27,10 +23,7 @@ export class ApiResponseHeader {
       this.message = message || 'Operation successful';
     } else {
       this.err_code = errCode || ERROR_CODES.SERVER_ERROR;
-      this.err_msg =
-        errMsg ||
-        ERROR_MESSAGES[errCode || ERROR_CODES.SERVER_ERROR] ||
-        'Unknown error';
+      this.err_msg = errMsg || 'Unknown error';
     }
   }
 

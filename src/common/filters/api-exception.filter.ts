@@ -30,16 +30,27 @@ export class ApiExceptionFilter implements ExceptionFilter {
       // Standard HTTP exception
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message =
+      const message: string | string[] =
         typeof exceptionResponse === 'string'
           ? exceptionResponse
-          : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            (exceptionResponse as any).message || 'Request failed';
+          : (exceptionResponse as { message?: string | string[] }).message ||
+            'Request failed';
 
       // Map common HTTP exceptions to error codes
       let errCode: ErrorCode = ERROR_CODES.SERVER_ERROR;
-      if (status === HttpStatus.BAD_REQUEST) {
+
+      // Check if it's a validation error for lang parameter
+      const errorMessage = Array.isArray(message)
+        ? message.join(', ')
+        : message;
+      if (
+        typeof errorMessage === 'string' &&
+        (errorMessage.includes('lang must be one of') ||
+          (errorMessage.includes('lang') &&
+            errorMessage.includes('en, tc, sc, all')))
+      ) {
+        errCode = ERROR_CODES.INVALID_LANG_VALUE;
+      } else if (status === HttpStatus.BAD_REQUEST) {
         errCode = ERROR_CODES.INVALID_PARAMETER_FORMAT;
       } else if (status === HttpStatus.NOT_FOUND) {
         errCode = ERROR_CODES.RECORD_NOT_FOUND;
@@ -49,9 +60,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
         errCode = ERROR_CODES.UNAUTHORIZED;
       }
 
-      const errMsg = (
-        Array.isArray(message) ? message.join(', ') : message
-      ) as string;
+      const errMsg = Array.isArray(message) ? message.join(', ') : message;
       apiResponse = ApiResponse.error(errCode, errMsg);
     } else {
       // Unknown error - check for database errors

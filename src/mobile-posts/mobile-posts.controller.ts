@@ -34,7 +34,6 @@ export class MobilePostsController {
       throw new ApiException(
         ERROR_CODES.INVALID_LANG_VALUE,
         'lang must be one of: en, tc, sc, all',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -47,7 +46,6 @@ export class MobilePostsController {
       throw new ApiException(
         ERROR_CODES.INVALID_PARAMETER_FORMAT,
         'page must be a positive integer',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -61,7 +59,6 @@ export class MobilePostsController {
       throw new ApiException(
         ERROR_CODES.INVALID_PARAMETER_FORMAT,
         'limit must be between 1 and 200',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -83,7 +80,6 @@ export class MobilePostsController {
       throw new ApiException(
         ERROR_CODES.INVALID_LANG_VALUE,
         'lang must be one of: en, tc, sc, all',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -126,7 +122,6 @@ export class MobilePostsController {
       throw new ApiException(
         ERROR_CODES.INVALID_LANG_VALUE,
         'lang must be one of: en, tc, sc, all',
-        'invalid input',
         HttpStatus.BAD_REQUEST,
       );
     }
