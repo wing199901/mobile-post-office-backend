@@ -43,13 +43,20 @@ export class ApiExceptionFilter implements ExceptionFilter {
       const errorMessage = Array.isArray(message)
         ? message.join(', ')
         : message;
-      if (
-        typeof errorMessage === 'string' &&
-        (errorMessage.includes('lang must be one of') ||
-          (errorMessage.includes('lang') &&
-            errorMessage.includes('en, tc, sc, all')))
-      ) {
+      if (typeof errorMessage === 'string' && errorMessage.includes('lang')) {
         errCode = ERROR_CODES.INVALID_LANG_VALUE;
+      } else if (
+        typeof errorMessage === 'string' &&
+        (errorMessage.includes('openHour') ||
+          errorMessage.includes('closeHour'))
+      ) {
+        errCode = ERROR_CODES.INVALID_TIME_FORMAT;
+      } else if (
+        typeof errorMessage === 'string' &&
+        (errorMessage.includes('latitude') ||
+          errorMessage.includes('longitude'))
+      ) {
+        errCode = ERROR_CODES.INVALID_NUMERIC_VALUE;
       } else if (status === HttpStatus.BAD_REQUEST) {
         errCode = ERROR_CODES.INVALID_PARAMETER_FORMAT;
       } else if (status === HttpStatus.NOT_FOUND) {
