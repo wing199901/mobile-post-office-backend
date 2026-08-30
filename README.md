@@ -1,4 +1,4 @@
-# Mobile Post Office API
+# Mobile Post Office API (UWE Assignment)
 
 A complete NestJS backend implementation for the Mobile Post Office application with full multilingual support (English, Traditional Chinese, Simplified Chinese).
 
